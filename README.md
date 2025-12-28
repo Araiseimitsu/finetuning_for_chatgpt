@@ -1,4 +1,4 @@
-# 新井精密アシスタント - 管理システム
+# finetuning_for_chatgpt
 
 OpenAI ファインチューニング管理のための統合Webアプリケーションです。
 FastAPI, HTMX, Jinja2, TailwindCSS を使用して構築されています。

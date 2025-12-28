@@ -4,69 +4,81 @@
 
 {% block content %}
 <div class="fade-in">
-    <!-- ヘッダー -->
+    <!-- Header -->
     <div class="flex items-center justify-between mb-10">
         <div>
-            <h1 class="text-4xl font-semibold tracking-tight text-apple-gray-800 mb-2">Files</h1>
-            <p class="text-apple-gray-400 text-lg">トレーニングデータを管理</p>
+            <h1 class="text-4xl font-semibold tracking-tight text-gray-100 mb-2 font-mono">Files</h1>
+            <p class="text-gray-400 text-lg font-mono">Manage Training Data</p>
         </div>
     </div>
 
-    <!-- アップロードセクション -->
-    <div class="card rounded-2xl p-8 mb-8">
-        <h2 class="text-lg font-semibold text-apple-gray-800 mb-6">Upload Training Data</h2>
+    <!-- Upload Section -->
+    <div class="card rounded-2xl p-8 mb-8 bg-[#131316] border border-white/5">
+        <h2 class="text-lg font-semibold text-gray-200 mb-6 font-mono">Upload Training Data</h2>
         <form id="upload-form" enctype="multipart/form-data" class="space-y-6">
-            <div class="border-2 border-dashed border-apple-gray-200 rounded-xl p-8 text-center hover:border-apple-blue/50 transition-colors" id="drop-zone">
-                <svg class="w-12 h-12 mx-auto text-apple-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                <p class="text-apple-gray-400 mb-4">ファイルをドロップまたはクリックして選択</p>
+            <div class="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-tech-blue/50 hover:bg-white/5 transition-all group"
+                id="drop-zone">
+                <div
+                    class="w-16 h-16 mx-auto bg-white/5 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <svg class="w-8 h-8 text-gray-400 group-hover:text-tech-blue transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                </div>
+                <p class="text-gray-400 mb-4 font-mono text-sm">Drop JSONL file here or click to browse</p>
                 <input type="file" name="file" id="file-input" accept=".jsonl" class="hidden" required>
-                <label for="file-input" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium cursor-pointer inline-block text-sm">
-                    ファイルを選択
+                <label for="file-input"
+                    class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium cursor-pointer inline-block text-sm shadow-lg shadow-tech-blue/20 hover:shadow-tech-blue/30 transition-all">
+                    Select File
                 </label>
-                <p class="text-xs text-apple-gray-300 mt-4">JSONL形式 (Chat Completions または Legacy)</p>
+                <p class="text-xs text-gray-500 mt-4 font-mono">JSONL Format (Chat Completions or Legacy)</p>
             </div>
-            <div id="file-preview" class="hidden bg-apple-gray-50 rounded-xl p-4">
+
+            <div id="file-preview" class="hidden bg-white/5 rounded-xl p-4 border border-white/10">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <svg class="w-5 h-5 text-apple-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span id="file-name" class="text-sm font-medium text-apple-gray-800"></span>
-                        <span id="file-size" class="text-xs text-apple-gray-400"></span>
+                        <div class="w-8 h-8 rounded bg-tech-blue/10 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-tech-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <span id="file-name" class="text-sm font-medium text-gray-200 font-mono"></span>
+                        <span id="file-size" class="text-xs text-gray-500 font-mono"></span>
                     </div>
-                    <button type="button" id="clear-file" class="text-apple-gray-400 hover:text-apple-red transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+                    <button type="button" id="clear-file"
+                        class="text-gray-500 hover:text-red-400 transition-colors bg-white/5 p-1.5 rounded-lg hover:bg-white/10">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
             </div>
+
             <div class="flex justify-end">
-                <button type="submit" id="upload-btn" class="btn-primary text-white px-8 py-3 rounded-xl font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    <span id="upload-text">アップロード</span>
-                    <span id="upload-loading" class="hidden loading-dots">
-                        <span class="inline-block w-1.5 h-1.5 bg-white rounded-full mx-0.5"></span>
-                        <span class="inline-block w-1.5 h-1.5 bg-white rounded-full mx-0.5"></span>
-                        <span class="inline-block w-1.5 h-1.5 bg-white rounded-full mx-0.5"></span>
+                <button type="submit" id="upload-btn"
+                    class="btn-primary text-white px-8 py-3 rounded-xl font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-tech-blue/20"
+                    disabled>
+                    <span id="upload-text">Upload</span>
+                    <span id="upload-loading" class="hidden loading-dots flex gap-1">
+                        <span class="inline-block w-1.5 h-1.5 bg-white rounded-full"></span>
+                        <span class="inline-block w-1.5 h-1.5 bg-white rounded-full"></span>
+                        <span class="inline-block w-1.5 h-1.5 bg-white rounded-full"></span>
                     </span>
                 </button>
             </div>
         </form>
     </div>
 
-    <!-- ファイル一覧 -->
-    <div class="card rounded-2xl p-8">
+    <!-- Files List -->
+    <div class="card rounded-2xl p-8 bg-[#131316] border border-white/5">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-semibold text-apple-gray-800">Uploaded Files</h2>
-            <button
-                hx-get="/htmx/files-list"
-                hx-target="#files-list"
-                hx-swap="innerHTML"
-                class="text-apple-blue text-sm font-medium hover:underline"
-            >
-                更新
+            <h2 class="text-lg font-semibold text-gray-200 font-mono">Uploaded Files</h2>
+            <button hx-get="/htmx/files-list" hx-target="#files-list" hx-swap="innerHTML"
+                class="text-tech-blue text-sm font-medium hover:text-tech-accent transition-colors">
+                Refresh
             </button>
         </div>
         <div id="files-list">
@@ -74,39 +86,43 @@
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead>
-                        <tr class="text-left text-xs text-apple-gray-400 border-b border-apple-gray-100">
-                            <th class="pb-3 font-medium">ファイル名</th>
-                            <th class="pb-3 font-medium">サイズ</th>
-                            <th class="pb-3 font-medium">ステータス</th>
-                            <th class="pb-3 font-medium">作成日時</th>
-                            <th class="pb-3 font-medium text-right">アクション</th>
+                        <tr
+                            class="text-left text-xs text-gray-500 border-b border-white/5 uppercase tracking-wider font-mono">
+                            <th class="pb-3 font-medium">Filename</th>
+                            <th class="pb-3 font-medium">Size</th>
+                            <th class="pb-3 font-medium">Status</th>
+                            <th class="pb-3 font-medium">Created</th>
+                            <th class="pb-3 font-medium text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-apple-gray-100">
+                    <tbody class="divide-y divide-white/5">
                         {% for file in files %}
-                        <tr class="hover:bg-apple-gray-50/50 transition-colors">
+                        <tr class="hover:bg-white/5 transition-colors group">
                             <td class="py-4">
                                 <div class="flex items-center gap-3">
-                                    <svg class="w-5 h-5 text-apple-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
+                                    <div
+                                        class="w-8 h-8 rounded bg-tech-blue/10 flex items-center justify-center group-hover:bg-tech-blue/20 transition-colors">
+                                        <svg class="w-4 h-4 text-tech-blue" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
                                     <div>
-                                        <p class="text-sm font-medium text-apple-gray-800">{{ file.filename }}</p>
-                                        <p class="text-xs text-apple-gray-400 font-mono">{{ file.id }}</p>
+                                        <p class="text-sm font-medium text-gray-200 font-mono">{{ file.filename }}</p>
+                                        <p class="text-xs text-gray-500 font-mono">{{ file.id }}</p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 text-sm text-apple-gray-600">{{ file.bytes }}</td>
+                            <td class="py-4 text-sm text-gray-400 font-mono">{{ file.bytes }}</td>
                             <td class="py-4">
                                 <span class="status-badge status-{{ file.status }}">{{ file.status }}</span>
                             </td>
-                            <td class="py-4 text-sm text-apple-gray-600">{{ file.created_at }}</td>
+                            <td class="py-4 text-sm text-gray-400 font-mono">{{ file.created_at }}</td>
                             <td class="py-4 text-right">
-                                <button
-                                    onclick="deleteFile('{{ file.id }}', '{{ file.filename }}')"
-                                    class="text-apple-red text-sm font-medium hover:underline"
-                                >
-                                    削除
+                                <button onclick="deleteFile('{{ file.id }}', '{{ file.filename }}')"
+                                    class="text-red-400 text-xs font-mono hover:text-red-300 transition-colors bg-red-500/5 px-3 py-1.5 rounded hover:bg-red-500/10 border border-red-500/10">
+                                    DELETE
                                 </button>
                             </td>
                         </tr>
@@ -115,31 +131,38 @@
                 </table>
             </div>
             {% else %}
-            <div class="text-center py-12">
-                <svg class="w-16 h-16 mx-auto text-apple-gray-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <p class="text-apple-gray-400">アップロードされたファイルはありません</p>
+            <div class="text-center py-16">
+                <div class="w-16 h-16 mx-auto bg-white/5 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <p class="text-gray-400 font-mono text-sm">No files uploaded</p>
             </div>
             {% endif %}
         </div>
     </div>
 </div>
 
-<!-- 削除確認モーダル -->
+<!-- Delete Modal -->
 <div id="delete-modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md">
-        <h3 class="text-lg font-semibold text-apple-gray-800 mb-2">ファイルを削除</h3>
-        <p class="text-sm text-apple-gray-400 mb-6">
-            <span id="delete-filename" class="font-medium text-apple-gray-600"></span> を削除しますか？この操作は取り消せません。
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
+    <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#131316] border border-white/10 rounded-2xl shadow-2xl p-6 w-full max-w-md">
+        <h3 class="text-lg font-semibold text-gray-100 mb-2 font-mono">Delete File</h3>
+        <p class="text-sm text-gray-400 mb-6">
+            Are you sure you want to delete <span id="delete-filename" class="font-medium text-gray-200"></span>? This
+            action cannot be undone.
         </p>
         <div class="flex gap-3 justify-end">
-            <button onclick="closeDeleteModal()" class="px-5 py-2.5 rounded-xl text-sm font-medium text-apple-gray-600 hover:bg-apple-gray-100 transition-colors">
-                キャンセル
+            <button onclick="closeDeleteModal()"
+                class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-gray-200 hover:bg-white/5 transition-colors">
+                Cancel
             </button>
-            <button id="confirm-delete-btn" class="px-5 py-2.5 rounded-xl text-sm font-medium bg-apple-red text-white hover:bg-red-600 transition-colors">
-                削除
+            <button id="confirm-delete-btn"
+                class="px-5 py-2.5 rounded-xl text-sm font-medium bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors">
+                Delete
             </button>
         </div>
     </div>
@@ -186,22 +209,22 @@
 
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        dropZone.classList.add('border-apple-blue', 'bg-apple-blue/5');
+        dropZone.classList.add('border-tech-blue', 'bg-tech-blue/5');
     });
 
     dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('border-apple-blue', 'bg-apple-blue/5');
+        dropZone.classList.remove('border-tech-blue', 'bg-tech-blue/5');
     });
 
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
-        dropZone.classList.remove('border-apple-blue', 'bg-apple-blue/5');
+        dropZone.classList.remove('border-tech-blue', 'bg-tech-blue/5');
         const files = e.dataTransfer.files;
         if (files[0] && files[0].name.endsWith('.jsonl')) {
             fileInput.files = files;
             showFilePreview(files[0]);
         } else {
-            showToast('JSONL形式のファイルを選択してください', 'error');
+            showToast('Please select a JSONL file', 'error');
         }
     });
 
@@ -227,15 +250,15 @@
             const data = await response.json();
 
             if (response.ok) {
-                showToast(data.message || 'アップロード成功', 'success');
+                showToast(data.message || 'Upload successful', 'success');
                 clearFileSelection();
                 htmx.trigger('#files-list', 'htmx:trigger');
                 location.reload();
             } else {
-                showToast(data.detail || 'アップロードに失敗しました', 'error');
+                showToast(data.detail || 'Upload failed', 'error');
             }
         } catch (error) {
-            showToast('エラーが発生しました', 'error');
+            showToast('Error occurred', 'error');
         } finally {
             uploadBtn.disabled = false;
             document.getElementById('upload-text').classList.remove('hidden');
@@ -266,14 +289,14 @@
             const data = await response.json();
 
             if (response.ok) {
-                showToast(data.message || 'ファイルを削除しました', 'success');
+                showToast(data.message || 'File deleted', 'success');
                 closeDeleteModal();
                 location.reload();
             } else {
-                showToast(data.detail || '削除に失敗しました', 'error');
+                showToast(data.detail || 'Failed to delete', 'error');
             }
         } catch (error) {
-            showToast('エラーが発生しました', 'error');
+            showToast('Error occurred', 'error');
         }
     });
 </script>

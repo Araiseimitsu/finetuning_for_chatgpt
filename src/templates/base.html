@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,30 +8,24 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Hiragino Sans', 'Meiryo', 'sans-serif'],
+                        sans: ['Inter', 'SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
                     },
                     colors: {
-                        apple: {
-                            gray: {
-                                50: '#f5f5f7',
-                                100: '#e8e8ed',
-                                200: '#d2d2d7',
-                                300: '#86868b',
-                                400: '#6e6e73',
-                                500: '#515154',
-                                600: '#3d3d3f',
-                                700: '#2d2d2f',
-                                800: '#1d1d1f',
-                                900: '#0d0d0f',
-                            },
-                            blue: '#0071e3',
-                            green: '#34c759',
-                            red: '#ff3b30',
-                            orange: '#ff9500',
-                            yellow: '#ffcc00',
+                        dark: {
+                            bg: '#0a0a0c',
+                            surface: '#131316',
+                            border: '#2a2a30',
+                        },
+                        tech: {
+                            blue: '#3b82f6',
+                            green: '#10b981',
+                            purple: '#8b5cf6',
+                            accent: '#6366f1'
                         }
                     },
                     backdropBlur: {
@@ -41,137 +35,138 @@
             }
         }
     </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        .glass {
-            background: rgba(255, 255, 255, 0.72);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        body {
+            background-color: #0a0a0c;
+            color: #e4e4e7;
         }
+        
         .glass-dark {
-            background: rgba(29, 29, 31, 0.72);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(19, 19, 22, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
+
         .nav-link {
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #a1a1aa;
         }
+        
         .nav-link:hover {
-            background: rgba(0, 0, 0, 0.04);
+            color: #f4f4f5;
+            background: rgba(255, 255, 255, 0.05);
         }
+        
         .nav-link.active {
-            background: rgba(0, 113, 227, 0.08);
-            color: #0071e3;
+            color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
         }
+
         .btn-primary {
-            background: linear-gradient(180deg, #0077ED 0%, #0071e3 100%);
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 15px rgba(79, 70, 229, 0.3);
         }
+        
         .btn-primary:hover {
-            background: linear-gradient(180deg, #0077ED 0%, #0068d0 100%);
-            transform: scale(1.02);
+            filter: brightness(1.1);
+            transform: translateY(-1px);
         }
+        
         .btn-primary:active {
-            transform: scale(0.98);
+            transform: translateY(1px);
         }
+
         .card {
-            background: rgba(255, 255, 255, 0.72);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: #131316;
+            border: 1px solid #2a2a30;
+            border-radius: 12px;
+            transition: border-color 0.2s ease;
         }
+        
         .card:hover {
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            transform: translateY(-2px);
+            border-color: #3f3f46;
         }
+
         .status-badge {
             font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.02em;
+            font-weight: 600;
+            letter-spacing: 0.05em;
             padding: 4px 10px;
-            border-radius: 20px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
         }
-        .status-succeeded { background: rgba(52, 199, 89, 0.12); color: #248a3d; }
-        .status-running, .status-validating_files { background: rgba(0, 113, 227, 0.12); color: #0071e3; }
-        .status-failed, .status-cancelled { background: rgba(255, 59, 48, 0.12); color: #ff3b30; }
-        .status-queued, .status-pending { background: rgba(255, 149, 0, 0.12); color: #c93400; }
-        .status-processed { background: rgba(52, 199, 89, 0.12); color: #248a3d; }
+        
+        .status-succeeded { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .status-running { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
+        .status-failed { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
 
-        .fade-in {
-            animation: fadeIn 0.3s ease-out;
-        }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .loading-dots span {
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
-        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-            40% { transform: scale(1); opacity: 1; }
-        }
+
+        /* Technical Input Graphics */
         input[type="file"]::file-selector-button {
-            background: linear-gradient(180deg, #f5f5f7 0%, #e8e8ed 100%);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: #27272a;
+            color: #e4e4e7;
+            border: 1px solid #3f3f46;
             padding: 8px 16px;
-            border-radius: 8px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
             font-size: 13px;
-            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
         }
+        
         input[type="file"]::file-selector-button:hover {
-            background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
+            background: #3f3f46;
+            border-color: #52525b;
         }
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.15);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.25);
-        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0c; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
     </style>
 </head>
-<body class="bg-apple-gray-50 font-sans text-apple-gray-800 min-h-screen">
-    <!-- ナビゲーション -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-black/5">
+<body class="font-sans antialiased min-h-screen selection:bg-tech-accent selection:text-white">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-dark">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="flex items-center justify-between h-14">
-                <div class="flex items-center gap-1">
-                    <a href="/" class="text-lg font-semibold tracking-tight text-apple-gray-800 mr-8">
-                        Fine-tuning
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-6">
+                    <a href="/" class="flex items-center gap-3 group">
+                        <img src="/static/logo.png" alt="Logo" class="w-8 h-8 object-contain transition-transform group-hover:scale-105">
+                        <span class="text-sm font-bold tracking-wide text-gray-100 font-mono">FINETUNE<span class="text-tech-accent">.MGR</span></span>
                     </a>
-                    <a href="/" class="nav-link {% if page == 'dashboard' %}active{% endif %} px-4 py-2 rounded-lg text-sm font-medium">
-                        Dashboard
-                    </a>
-                    <a href="/files" class="nav-link {% if page == 'files' %}active{% endif %} px-4 py-2 rounded-lg text-sm font-medium">
-                        Files
-                    </a>
-                    <a href="/jobs" class="nav-link {% if page == 'jobs' %}active{% endif %} px-4 py-2 rounded-lg text-sm font-medium">
-                        Jobs
-                    </a>
-                    <a href="/chat" class="nav-link {% if page == 'chat' %}active{% endif %} px-4 py-2 rounded-lg text-sm font-medium">
-                        Chat
-                    </a>
+                    
+                    <div class="h-6 w-px bg-white/10 mx-2"></div>
+                    
+                    <div class="flex items-center gap-1">
+                        <a href="/" class="nav-link {% if page == 'dashboard' %}active{% endif %} px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="/files" class="nav-link {% if page == 'files' %}active{% endif %} px-3 py-2 rounded-md text-sm font-medium">Files</a>
+                        <a href="/jobs" class="nav-link {% if page == 'jobs' %}active{% endif %} px-3 py-2 rounded-md text-sm font-medium">Jobs</a>
+                        <a href="/chat" class="nav-link {% if page == 'chat' %}active{% endif %} px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+                    </div>
                 </div>
+
                 <div class="flex items-center gap-3">
-                    <div id="api-status" class="flex items-center gap-2 text-xs">
+                    <div id="api-status" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/5 font-mono text-xs">
                         {% if stats and stats.api_connected %}
-                        <span class="w-2 h-2 rounded-full bg-apple-green"></span>
-                        <span class="text-apple-gray-400">API Connected</span>
+                        <span class="w-2 h-2 rounded-full bg-tech-green shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                        <span class="text-gray-300">ONLINE</span>
                         {% else %}
-                        <span class="w-2 h-2 rounded-full bg-apple-red"></span>
-                        <span class="text-apple-gray-400">API Disconnected</span>
+                        <span class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span>
+                        <span class="text-gray-300">OFFLINE</span>
                         {% endif %}
                     </div>
                 </div>
@@ -179,30 +174,40 @@
         </div>
     </nav>
 
-    <!-- メインコンテンツ -->
-    <main class="pt-20 pb-12 px-6">
+    <!-- Main Content -->
+    <main class="pt-24 pb-12 px-6">
         <div class="max-w-7xl mx-auto">
             {% block content %}{% endblock %}
         </div>
     </main>
 
-    <!-- トースト通知 -->
+    <!-- Toasts -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3"></div>
 
     <script>
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            const bgColor = type === 'success' ? 'bg-apple-green' : type === 'error' ? 'bg-apple-red' : 'bg-apple-blue';
-            toast.className = `${bgColor} text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium fade-in`;
-            toast.textContent = message;
+            // Technical Toast Style
+            const borderColors = type === 'success' ? 'border-tech-green' : type === 'error' ? 'border-red-500' : 'border-tech-blue';
+            const textColors = type === 'success' ? 'text-tech-green' : type === 'error' ? 'text-red-500' : 'text-tech-blue';
+            
+            toast.className = `bg-[#131316] border-l-4 ${borderColors} text-gray-200 px-5 py-4 rounded-r-lg shadow-2xl text-sm font-medium fade-in flex items-center gap-3 min-w-[300px] border-y border-r border-white/5`;
+            
+            // Icon
+            const icon = document.createElement('span');
+            icon.className = `w-2 h-2 rounded-full ${type === 'success' ? 'bg-tech-green' : type === 'error' ? 'bg-red-500' : 'bg-tech-blue'}`;
+            
+            toast.appendChild(icon);
+            toast.appendChild(document.createTextNode(message));
+            
             container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
-                toast.style.transform = 'translateX(20px)';
+                toast.style.transform = 'translateY(10px)';
                 toast.style.transition = 'all 0.3s ease';
                 setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            }, 4000);
         }
 
         document.body.addEventListener('htmx:afterRequest', function(evt) {
@@ -219,9 +224,9 @@
         document.body.addEventListener('htmx:responseError', function(evt) {
             try {
                 const response = JSON.parse(evt.detail.xhr.responseText);
-                showToast(response.detail || 'Error occurred', 'error');
+                showToast(response.detail || 'System Error', 'error');
             } catch(e) {
-                showToast('Error occurred', 'error');
+                showToast('Connection failed', 'error');
             }
         });
     </script>
