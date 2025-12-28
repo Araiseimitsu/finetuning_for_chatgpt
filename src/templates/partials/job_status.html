@@ -1,0 +1,48 @@
+{% if job %}
+<div class="space-y-4">
+    <div class="flex items-center gap-3">
+        <span class="status-badge status-{{ job.status }}">{{ job.status }}</span>
+    </div>
+    <div class="grid grid-cols-2 gap-4 text-sm">
+        <div>
+            <p class="text-apple-gray-400 text-xs mb-1">ジョブID</p>
+            <p class="font-mono text-apple-gray-600 break-all">{{ job.id }}</p>
+        </div>
+        <div>
+            <p class="text-apple-gray-400 text-xs mb-1">ベースモデル</p>
+            <p class="text-apple-gray-800">{{ job.model }}</p>
+        </div>
+        <div>
+            <p class="text-apple-gray-400 text-xs mb-1">作成日時</p>
+            <p class="text-apple-gray-600">{{ job.created_at }}</p>
+        </div>
+        <div>
+            <p class="text-apple-gray-400 text-xs mb-1">完了日時</p>
+            <p class="text-apple-gray-600">{{ job.finished_at or '-' }}</p>
+        </div>
+    </div>
+    {% if job.fine_tuned_model %}
+    <div class="bg-apple-green/10 rounded-xl p-4">
+        <p class="text-apple-gray-400 text-xs mb-1">ファインチューンモデル</p>
+        <p class="font-mono text-apple-green text-sm break-all">{{ job.fine_tuned_model }}</p>
+    </div>
+    {% endif %}
+    {% if job.events %}
+    <div class="mt-6">
+        <h4 class="text-sm font-medium text-apple-gray-600 mb-3">イベント履歴</h4>
+        <div class="space-y-2 max-h-48 overflow-y-auto">
+            {% for event in job.events %}
+            <div class="flex gap-3 text-xs">
+                <span class="text-apple-gray-400 whitespace-nowrap">{{ event.time }}</span>
+                <span class="text-apple-gray-600">{{ event.message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="text-center py-8 text-apple-red">
+    ジョブ情報の取得に失敗しました
+</div>
+{% endif %}

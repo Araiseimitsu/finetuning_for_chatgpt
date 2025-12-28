@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - Fine-tuning Manager{% endblock %}
+
+{% block content %}
+<div class="fade-in h-[calc(100vh-8rem)]">
+    <div class="flex gap-6 h-full">
+        <!-- サイドバー -->
+        <div class="w-80 flex-shrink-0">
+            <div class="card rounded-2xl p-6 h-full">
+                <h2 class="text-lg font-semibold text-apple-gray-800 mb-6">Settings</h2>
+
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-apple-gray-600 mb-2">モデル</label>
+                        <select id="model-select" class="w-full px-4 py-3 rounded-xl border border-apple-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue">
+                            {% if models %}
+                            {% for model in models %}
+                            <option value="{{ model.id }}">{{ model.name }}</option>
+                            {% endfor %}
+                            {% else %}
+                            <option value="">モデルがありません</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-apple-gray-600 mb-2">システムプロンプト</label>
+                        <textarea
+                            id="system-prompt"
+                            rows="6"
+                            placeholder="アシスタントの役割や振る舞いを指定..."
+                            class="w-full px-4 py-3 rounded-xl border border-apple-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue resize-none"
+                        ></textarea>
+                    </div>
+
+                    <button
+                        onclick="clearChat()"
+                        class="w-full px-4 py-2.5 rounded-xl text-sm font-medium text-apple-gray-600 border border-apple-gray-200 hover:bg-apple-gray-50 transition-colors"
+                    >
+                        チャットをクリア
+                    </button>
+                </div>
+
+                {% if not models %}
+                <div class="mt-6 p-4 bg-apple-orange/10 rounded-xl">
+                    <p class="text-sm text-apple-orange">
+                        ファインチューニング済みモデルがありません。<br>
+                        <a href="/jobs" class="underline">ジョブを作成</a>してください。
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- チャットエリア -->
+        <div class="flex-1 flex flex-col">
+            <div class="card rounded-2xl flex-1 flex flex-col overflow-hidden">
+                <!-- メッセージエリア -->
+                <div id="messages" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <div class="text-center py-16">
+                        <svg class="w-16 h-16 mx-auto text-apple-gray-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        <p class="text-apple-gray-400">ファインチューニング済みモデルとチャット</p>
+                        <p class="text-apple-gray-300 text-sm mt-2">メッセージを入力して開始</p>
+                    </div>
+                </div>
+
+                <!-- 入力エリア -->
+                <div class="border-t border-apple-gray-100 p-4">
+                    <form id="chat-form" class="flex gap-3">
+                        <input
+                            type="text"
+                            id="message-input"
+                            placeholder="メッセージを入力..."
+                            autocomplete="off"
+                            class="flex-1 px-5 py-3 rounded-xl border border-apple-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue"
+                            {% if not models %}disabled{% endif %}
+                        >
+                        <button
+                            type="submit"
+                            id="send-btn"
+                            class="btn-primary text-white px-6 py-3 rounded-xl font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            {% if not models %}disabled{% endif %}
+                        >
+                            <span id="send-text">送信</span>
+                            <span id="send-loading" class="hidden loading-dots">
+                                <span class="inline-block w-1.5 h-1.5 bg-white rounded-full mx-0.5"></span>
+                                <span class="inline-block w-1.5 h-1.5 bg-white rounded-full mx-0.5"></span>
+                                <span class="inline-block w-1.5 h-1.5 bg-white rounded-full mx-0.5"></span>
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const messagesEl = document.getElementById('messages');
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    const modelSelect = document.getElementById('model-select');
+    const systemPrompt = document.getElementById('system-prompt');
+
+    let isFirstMessage = true;
+
+    function addMessage(content, role) {
+        if (isFirstMessage) {
+            messagesEl.innerHTML = '';
+            isFirstMessage = false;
+        }
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} fade-in`;
+
+        const bubbleClass = role === 'user'
+            ? 'bg-apple-blue text-white'
+            : 'bg-apple-gray-100 text-apple-gray-800';
+
+        messageDiv.innerHTML = `
+            <div class="max-w-[70%] ${bubbleClass} px-5 py-3 rounded-2xl">
+                <p class="text-sm whitespace-pre-wrap">${escapeHtml(content)}</p>
+            </div>
+        `;
+
+        messagesEl.appendChild(messageDiv);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function addLoadingMessage() {
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'loading-message';
+        loadingDiv.className = 'flex justify-start fade-in';
+        loadingDiv.innerHTML = `
+            <div class="bg-apple-gray-100 px-5 py-3 rounded-2xl">
+                <div class="loading-dots">
+                    <span class="inline-block w-2 h-2 bg-apple-gray-400 rounded-full mx-0.5"></span>
+                    <span class="inline-block w-2 h-2 bg-apple-gray-400 rounded-full mx-0.5"></span>
+                    <span class="inline-block w-2 h-2 bg-apple-gray-400 rounded-full mx-0.5"></span>
+                </div>
+            </div>
+        `;
+        messagesEl.appendChild(loadingDiv);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function removeLoadingMessage() {
+        const loadingDiv = document.getElementById('loading-message');
+        if (loadingDiv) loadingDiv.remove();
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function clearChat() {
+        messagesEl.innerHTML = `
+            <div class="text-center py-16">
+                <svg class="w-16 h-16 mx-auto text-apple-gray-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                <p class="text-apple-gray-400">ファインチューニング済みモデルとチャット</p>
+                <p class="text-apple-gray-300 text-sm mt-2">メッセージを入力して開始</p>
+            </div>
+        `;
+        isFirstMessage = true;
+    }
+
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const message = messageInput.value.trim();
+        const model = modelSelect.value;
+
+        if (!message || !model) return;
+
+        messageInput.value = '';
+        addMessage(message, 'user');
+
+        sendBtn.disabled = true;
+        document.getElementById('send-text').classList.add('hidden');
+        document.getElementById('send-loading').classList.remove('hidden');
+        addLoadingMessage();
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: model,
+                    message: message,
+                    system_prompt: systemPrompt.value.trim()
+                })
+            });
+
+            const data = await response.json();
+            removeLoadingMessage();
+
+            if (response.ok) {
+                addMessage(data.response, 'assistant');
+            } else {
+                showToast(data.detail || 'エラーが発生しました', 'error');
+            }
+        } catch (error) {
+            removeLoadingMessage();
+            showToast('エラーが発生しました', 'error');
+        } finally {
+            sendBtn.disabled = false;
+            document.getElementById('send-text').classList.remove('hidden');
+            document.getElementById('send-loading').classList.add('hidden');
+            messageInput.focus();
+        }
+    });
+
+    messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+    });
+</script>
+{% endblock %}

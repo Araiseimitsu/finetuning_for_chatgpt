@@ -1,0 +1,57 @@
+{% if jobs %}
+<div class="space-y-4">
+    {% for job in jobs %}
+    <div class="border border-apple-gray-100 rounded-xl p-5 hover:shadow-md transition-all">
+        <div class="flex items-start justify-between">
+            <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="status-badge status-{{ job.status }}">{{ job.status }}</span>
+                    <span class="text-xs text-apple-gray-400">{{ job.created_at }}</span>
+                </div>
+                <p class="text-sm font-mono text-apple-gray-600 mb-1">{{ job.id }}</p>
+                <p class="text-xs text-apple-gray-400">Base: {{ job.model }}</p>
+                {% if job.fine_tuned_model %}
+                <p class="text-xs text-apple-green font-medium mt-2">
+                    Model: {{ job.fine_tuned_model }}
+                </p>
+                {% endif %}
+            </div>
+            <div class="flex items-center gap-2">
+                <button
+                    onclick="showJobStatus('{{ job.id }}')"
+                    class="text-apple-blue text-sm font-medium hover:underline"
+                >
+                    詳細
+                </button>
+                {% if job.status in ['running', 'validating_files', 'queued'] %}
+                <button
+                    onclick="cancelJob('{{ job.id }}')"
+                    class="text-apple-orange text-sm font-medium hover:underline"
+                >
+                    キャンセル
+                </button>
+                {% endif %}
+                {% if job.fine_tuned_model and job.status == 'succeeded' %}
+                <button
+                    onclick="deleteModel('{{ job.fine_tuned_model }}')"
+                    class="text-apple-red text-sm font-medium hover:underline"
+                >
+                    モデル削除
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-12">
+    <svg class="w-16 h-16 mx-auto text-apple-gray-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+    </svg>
+    <p class="text-apple-gray-400 mb-4">ファインチューニングジョブはありません</p>
+    <button onclick="openCreateModal()" class="text-apple-blue text-sm font-medium hover:underline">
+        最初のジョブを作成
+    </button>
+</div>
+{% endif %}

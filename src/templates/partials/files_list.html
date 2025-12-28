@@ -1,0 +1,52 @@
+{% if files %}
+<div class="overflow-x-auto">
+    <table class="w-full">
+        <thead>
+            <tr class="text-left text-xs text-apple-gray-400 border-b border-apple-gray-100">
+                <th class="pb-3 font-medium">ファイル名</th>
+                <th class="pb-3 font-medium">サイズ</th>
+                <th class="pb-3 font-medium">ステータス</th>
+                <th class="pb-3 font-medium">作成日時</th>
+                <th class="pb-3 font-medium text-right">アクション</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-apple-gray-100">
+            {% for file in files %}
+            <tr class="hover:bg-apple-gray-50/50 transition-colors">
+                <td class="py-4">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-apple-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-apple-gray-800">{{ file.filename }}</p>
+                            <p class="text-xs text-apple-gray-400 font-mono">{{ file.id }}</p>
+                        </div>
+                    </div>
+                </td>
+                <td class="py-4 text-sm text-apple-gray-600">{{ file.bytes }}</td>
+                <td class="py-4">
+                    <span class="status-badge status-{{ file.status }}">{{ file.status }}</span>
+                </td>
+                <td class="py-4 text-sm text-apple-gray-600">{{ file.created_at }}</td>
+                <td class="py-4 text-right">
+                    <button
+                        onclick="deleteFile('{{ file.id }}', '{{ file.filename }}')"
+                        class="text-apple-red text-sm font-medium hover:underline"
+                    >
+                        削除
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="text-center py-12">
+    <svg class="w-16 h-16 mx-auto text-apple-gray-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+    <p class="text-apple-gray-400">アップロードされたファイルはありません</p>
+</div>
+{% endif %}
